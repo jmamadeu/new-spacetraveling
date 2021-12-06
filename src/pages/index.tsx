@@ -1,4 +1,8 @@
-import { NextPage } from 'next';
+import { GetStaticProps, NextPage } from 'next';
+
+import Head from 'next/head';
+import Prismic from '@prismicio/client';
+import { getPrismicClient } from '../services/prismic';
 
 interface Post {
   uid?: string;
@@ -19,15 +23,28 @@ interface HomeProps {
   postsPagination: PostPagination;
 }
 
-const Home: NextPage<HomeProps> = () => {
-  return <h1>Home</h1>;
-};
+const Home: NextPage<HomeProps> = () => (
+  <>
+    <Head>
+      <title>Home | Space Traveling</title>
+    </Head>
+    <h1>Home</h1>
+  </>
+);
 
 export default Home;
 
-// export const getStaticProps = async () => {
-//   // const prismic = getPrismicClient();
-//   // const postsResponse = await prismic.query(TODO);
+export const getStaticProps: GetStaticProps = async () => {
+  const prismic = getPrismicClient();
+  const postsResponse = await prismic.query([
+    Prismic.Predicates.at('document.type', 'post'),
+  ]);
 
-//   // TODO
-// };
+  console.log(postsResponse);
+
+  return {
+    props: {
+      a: 1,
+    },
+  };
+};
