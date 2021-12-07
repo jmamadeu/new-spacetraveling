@@ -5,11 +5,11 @@
 }
 
 :root {
-  --color-body: D7D7D7#;
+  --color-body: #D7D7D7;
   --color-info: #BBBBBB;
   --color-heading: #F8F8F8;
   --color-background: #1A1D23;
-  --color-light-light: #FF57B2;
+  --color-hight-light: #FF57B2;
 }
 
 @media(min-width: 1000px) {
@@ -30,4 +30,12 @@ body {
 
 body, input, textarea, select, input {
   font: 400 1rem Inter, sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:-webkit-any-link {
+  text-decoration: none;
 }
