@@ -1,10 +1,9 @@
-import { FiCalendar, FiUser } from 'react-icons/fi';
+import Prismic from '@prismicio/client';
 import { GetStaticProps, NextPage } from 'next';
-import { useEffect, useState } from 'react';
-
 import Head from 'next/head';
 import Link from 'next/link';
-import Prismic from '@prismicio/client';
+import { useEffect, useState } from 'react';
+import { FiCalendar, FiUser } from 'react-icons/fi';
 import { getPrismicClient } from '../services/prismic';
 import { parsePosts } from '../utils/posts';
 import styles from './home.module.scss';
@@ -45,7 +44,7 @@ const Home: NextPage<HomeProps> = ({
       const postsResponse = await fetch(postsPagination.next_page).then(res =>
         res.json()
       );
-
+      console.log(postsResponse);
       const postsParsed = parsePosts(postsResponse);
 
       setPostPagination(current => ({
