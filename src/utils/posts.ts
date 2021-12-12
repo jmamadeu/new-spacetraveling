@@ -1,6 +1,6 @@
 import ApiSearchResponse from '@prismicio/client/types/ApiSearchResponse';
-import { PostPagination } from '../pages';
 import { RichText } from 'prismic-dom';
+import { PostPagination } from '../pages';
 
 export const formatDate = (date: string): string => {
   const newDate = new Date(date).toLocaleDateString('en-US', {

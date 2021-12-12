@@ -1,9 +1,11 @@
+import Prismic from '@prismicio/client';
 import { GetStaticPaths, GetStaticProps, NextPage } from 'next';
 import Head from 'next/head';
 import { RichText } from 'prismic-dom';
 import { FiCalendar, FiClock, FiUser } from 'react-icons/fi';
 import { v4 } from 'uuid';
 import { getPrismicClient } from '../../services/prismic';
+import { formatDate } from '../../utils/posts';
 import styles from './post.module.scss';
 
 interface Post {
@@ -38,10 +40,10 @@ const Post: NextPage<PostProps> = ({ post }) => (
         alt={post.data.title}
       />
 
-      <section>
+      <section className={styles.postContent}>
         <article>
-          <h1>Title</h1>
-          <div>
+          <h1>{post.data.title}</h1>
+          <div className={styles.labels}>
             <span>
               <FiCalendar size={12} /> {post.first_publication_date}
             </span>
@@ -56,8 +58,8 @@ const Post: NextPage<PostProps> = ({ post }) => (
         </article>
 
         {post.data.content.map(content => (
-          <article key={v4()}>
-            <h1>{content.heading}</h1>
+          <article key={v4()} className={styles.postBody}>
+            <h2>{content.heading}</h2>
 
             <div dangerouslySetInnerHTML={{ __html: content.body }} />
           </article>
@@ -71,12 +73,29 @@ export default Post;
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const prismic = getPrismicClient();
-  // const posts = await prismic.query(TODO);
 
-  return {
-    paths: [],
-    fallback: 'blocking',
-  };
+  try {
+    const postsResponse = await prismic.query(
+      [Prismic.Predicates.at('document.type', 'post')],
+      { pageSize: 2, page: 1 }
+    );
+
+    const posts = postsResponse?.results?.map(post => ({
+      params: {
+        slug: post?.uid as string,
+      },
+    }));
+
+    return {
+      paths: posts,
+      fallback: 'blocking',
+    };
+  } catch {
+    return {
+      paths: [],
+      fallback: 'blocking',
+    };
+  }
 };
 
 export const getStaticProps: GetStaticProps = async ({ params }) => {
@@ -91,8 +110,13 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
     const response = await prismic.getByUID('post', params.slug as string, {});
 
+    if (!response.uid || !response.first_publication_date)
+      return {
+        props: {},
+      };
+
     const post: Post = {
-      first_publication_date: response.first_publication_date,
+      first_publication_date: formatDate(response.first_publication_date),
       data: {
         author: RichText.asText(response.data.author),
         banner: {
