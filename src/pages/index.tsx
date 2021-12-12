@@ -44,7 +44,7 @@ const Home: NextPage<HomeProps> = ({
       const postsResponse = await fetch(postsPagination.next_page).then(res =>
         res.json()
       );
-      console.log(postsResponse);
+
       const postsParsed = parsePosts(postsResponse);
 
       setPostPagination(current => ({
@@ -64,7 +64,11 @@ const Home: NextPage<HomeProps> = ({
 
       <main className={styles.container}>
         <section>
-          {postsPagination.results.map(post => (
+          {!postsPagination?.results && (
+            <h4 className={styles.error}>There&apos;s no posts</h4>
+          )}
+
+          {postsPagination?.results?.map(post => (
             <Link key={post.uid} href={`post/${post.uid}`}>
               <a className={styles.contentContainer}>
                 <article key={post.uid}>
@@ -103,16 +107,25 @@ export default Home;
 
 export const getStaticProps: GetStaticProps = async () => {
   const prismic = getPrismicClient();
-  const postsResponse = await prismic.query(
-    [Prismic.Predicates.at('document.type', 'post')],
-    { pageSize: 2, page: 1 }
-  );
 
-  const results: PostPagination = parsePosts(postsResponse);
+  try {
+    const postsResponse = await prismic.query(
+      [Prismic.Predicates.at('document.type', 'post')],
+      { pageSize: 2, page: 1 }
+    );
 
-  return {
-    props: {
-      postsPagination: results,
-    },
-  };
+    const results: PostPagination = parsePosts(postsResponse);
+
+    return {
+      props: {
+        postsPagination: results,
+      },
+    };
+  } catch {
+    return {
+      props: {
+        postsPagination: [],
+      },
+    };
+  }
 };
