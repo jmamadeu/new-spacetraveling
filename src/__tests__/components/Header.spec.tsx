@@ -1,7 +1,6 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { RouterContext } from 'next/dist/next-server/lib/router-context';
-
-import Header from '../../components/Header';
+import { Header } from '../../components/Header';
 
 const mockedPush = jest.fn();
 let RouterWrapper;
@@ -10,17 +9,15 @@ describe('Header', () => {
   beforeAll(() => {
     mockedPush.mockImplementation(() => Promise.resolve());
     const MockedRouterContext = RouterContext as React.Context<unknown>;
-    RouterWrapper = ({ children }): JSX.Element => {
-      return (
-        <MockedRouterContext.Provider
-          value={{
-            push: mockedPush,
-          }}
-        >
-          {children}
-        </MockedRouterContext.Provider>
-      );
-    };
+    RouterWrapper = ({ children }): JSX.Element => (
+      <MockedRouterContext.Provider
+        value={{
+          push: mockedPush,
+        }}
+      >
+        {children}
+      </MockedRouterContext.Provider>
+    );
   });
 
   it('should be able to render logo', () => {

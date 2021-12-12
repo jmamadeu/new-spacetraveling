@@ -1,15 +1,15 @@
 import ApiSearchResponse from '@prismicio/client/types/ApiSearchResponse';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 import { RichText } from 'prismic-dom';
 import { PostPagination } from '../pages';
 
 export const formatDate = (date: string): string => {
-  const newDate = new Date(date).toLocaleDateString('en-US', {
-    month: 'long',
-    day: '2-digit',
-    year: 'numeric',
+  const formattedDate = format(new Date(date), 'd MMM y', {
+    locale: ptBR,
   });
 
-  return newDate;
+  return formattedDate;
 };
 
 export function parsePosts(post: ApiSearchResponse): PostPagination {

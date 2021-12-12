@@ -18,7 +18,7 @@ interface Post {
     author: string;
     content: {
       heading: string;
-      body: string;
+      body: { text: string }[];
     }[];
   };
 }
@@ -30,7 +30,7 @@ interface PostProps {
 const Post: NextPage<PostProps> = ({ post }) => (
   <>
     <Head>
-      <title>SpaceTraveling | {post.data.title}</title>
+      <title>SpaceTraveling | {post?.data?.title ?? ''}</title>
     </Head>
 
     <main>
@@ -61,7 +61,12 @@ const Post: NextPage<PostProps> = ({ post }) => (
           <article key={v4()} className={styles.postBody}>
             <h2>{content.heading}</h2>
 
-            <div dangerouslySetInnerHTML={{ __html: content.body }} />
+            {content.body.map(body => (
+              <div
+                key={v4()}
+                dangerouslySetInnerHTML={{ __html: body?.text }}
+              />
+            ))}
           </article>
         ))}
       </section>
@@ -120,11 +125,13 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
       data: {
         author: RichText.asText(response.data.author),
         banner: {
-          url: response.data.banner.url,
+          url: response.data.banner?.url ?? '',
         },
         title: RichText.asText(response.data.title),
         content: response.data.content.map((cont: any) => ({
-          body: RichText.asHtml(cont.body),
+          body: cont.body.map((body: any) => ({
+            text: RichText.asHtml([body]),
+          })),
           heading: RichText.asText(cont.heading),
         })),
       },

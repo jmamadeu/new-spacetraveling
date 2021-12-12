@@ -63,41 +63,38 @@ const Home: NextPage<HomeProps> = ({
       </Head>
 
       <main className={styles.container}>
-        <section>
-          {!postsPagination?.results && (
-            <h4 className={styles.error}>There&apos;s no posts</h4>
-          )}
+        {!postsPagination?.results && (
+          <h4 className={styles.error}>There&apos;s no posts</h4>
+        )}
 
-          {postsPagination?.results?.map(post => (
-            <Link key={post.uid} href={`post/${post.uid}`}>
-              <a className={styles.contentContainer}>
-                <article key={post.uid}>
-                  <h1>{post.data.title}</h1>
-                  <p>{post.data.subtitle}</p>
+        {postsPagination?.results?.map(post => (
+          <Link key={post.uid} href={`/post/${post.uid}`}>
+            <a className={styles.contentContainer}>
+              <h1>{post.data.title}</h1>
+              <p>{post.data.subtitle}</p>
 
-                  <div>
-                    <span>
-                      <FiCalendar size={12} /> {post.first_publication_date}
-                    </span>
-                    <span>
-                      <FiUser size={12} /> {post.data.author}
-                    </span>
-                  </div>
-                </article>
-              </a>
-            </Link>
-          ))}
+              <div>
+                <span>
+                  <FiCalendar size={12} />
+                  {post.first_publication_date}
+                </span>
+                <span>
+                  <FiUser size={12} /> {post.data.author}
+                </span>
+              </div>
+            </a>
+          </Link>
+        ))}
 
-          {postsPagination.next_page ? (
-            <button
-              type="button"
-              className={styles.button}
-              onClick={handleLoadNewPage}
-            >
-              Load more posts
-            </button>
-          ) : null}
-        </section>
+        {postsPagination.next_page ? (
+          <button
+            type="button"
+            className={styles.button}
+            onClick={handleLoadNewPage}
+          >
+            Carregar mais posts
+          </button>
+        ) : null}
       </main>
     </>
   );
